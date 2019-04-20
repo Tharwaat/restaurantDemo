@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="table")
+@Table(name="restaurant_table")
 public class TableEntity {
 	
 	// Columns
@@ -17,16 +17,20 @@ public class TableEntity {
 	@Column(name="id")
 	private int id;
 	
-	@Column(name="table_capacity")
+	@Column(name="capacity")
 	private int tableCapacity;
 	
-	@Column(name="table_number")
+	@Column(name="number")
 	private int tableNumber;
 	
 	// Constructors
 	public TableEntity(int tableCapacity, int tableNumber) {
 		this.tableCapacity = tableCapacity;
 		this.tableNumber = tableNumber;
+	}
+	
+	public TableEntity() {
+		
 	}
 	
 	// Setters and getters
