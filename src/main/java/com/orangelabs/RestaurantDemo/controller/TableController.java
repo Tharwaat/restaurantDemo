@@ -3,11 +3,14 @@ package com.orangelabs.RestaurantDemo.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.orangelabs.RestaurantDemo.dao.TableDao;
 import com.orangelabs.RestaurantDemo.entity.TableEntity;
 import com.orangelabs.RestaurantDemo.service.TableService;
 
@@ -22,7 +25,16 @@ public class TableController {
 	}
 	
 	@GetMapping("/tables")
-	public List<TableEntity> getAllTables(){
-		return tableService.getTables();
+	public ResponseEntity<List<TableEntity>> getAllTables(){
+		List<TableEntity> tables = tableService.getTables();
+		return new ResponseEntity<List<TableEntity>>(tables, HttpStatus.OK);
+	}
+	
+	@PostMapping("/tables/new")
+	public TableEntity addTable(@RequestBody TableEntity newTable) {
+		newTable.setId(0);
+		tableService.createTable(newTable);
+		
+		return newTable;
 	}
 }
