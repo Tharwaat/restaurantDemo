@@ -2,32 +2,35 @@ package com.orangelabs.RestaurantDemo.service;
 
 import java.util.List;
 
-import javax.transaction.Transactional;
-
-import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.orangelabs.RestaurantDemo.dao.TableDao;
+import com.orangelabs.RestaurantDemo.dao.TableDaoInterface;
 import com.orangelabs.RestaurantDemo.entity.TableEntity;
 
 @Service
 public class TableService {
-	private TableDao tableDao;
+//	private TableDao tableDao;
+//	
+//	@Autowired
+//	public TableService(TableDao tableDaoToEnject) {
+//		this.tableDao = tableDaoToEnject; 
+//	}
+//	
+	private TableDaoInterface tablesRepository;
 	
 	@Autowired
-	public TableService(TableDao tableDaoToEnject) {
-		this.tableDao = tableDaoToEnject; 
+	public TableService(TableDaoInterface tableDaoToEnject) {
+		this.tablesRepository = tableDaoToEnject; 
 	}
 	
-	@Transactional
 	public List<TableEntity> getTables(){
-		return tableDao.getAllTables();
+		return tablesRepository.findAll();
 	}
 	
-	@Transactional
 	public void createTable(TableEntity newTable) {
-		tableDao.saveTable(newTable);
+		tablesRepository.save(newTable);
 	}
+	
 }
