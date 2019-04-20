@@ -30,11 +30,12 @@ public class ReservationEntity {
 	private int personsNumber;
 	
 	@ManyToOne(cascade= {CascadeType.PERSIST, CascadeType.MERGE,
-						 CascadeType.REFRESH, CascadeType.DETACH})
+			CascadeType.REFRESH, CascadeType.DETACH})
 	@JoinColumn(name="user_id")
 	private UserEntity user;
 	
-	@OneToOne()
+	@ManyToOne(cascade= {CascadeType.PERSIST, CascadeType.MERGE,
+			 CascadeType.REFRESH, CascadeType.DETACH})
 	@JoinColumn(name="table_id")
 	private TableEntity table;
 	

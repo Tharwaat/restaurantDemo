@@ -1,5 +1,6 @@
 package com.orangelabs.RestaurantDemo.service;
 
+import java.sql.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,10 @@ public class TableService {
 	
 	public void createTable(TableEntity newTable) {
 		tablesRepository.save(newTable);
+	}
+	
+	public List<TableEntity>  getAvailavleTables(Date availableDate) {
+		return tablesRepository.getAvailableTables(availableDate);
 	}
 	
 }
