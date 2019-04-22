@@ -40,21 +40,21 @@ public class TableService {
 	public List<TableEntity>  getAvailavleTables(Date availableDate) {
 		List<TableEntity> availableTables = tablesRepository.getAvailableTables(availableDate); 
 		List<ReservationEntity> reservations = reservationRepository.getReservedTables(availableDate);
-		availableTables = RemoveDuplicateReservedTables(availableTables, reservations);
+		//availableTables = 
+		RemoveDuplicateReservedTables(availableTables, reservations);
 		return availableTables;
 	}
 	
-	private List<TableEntity> RemoveDuplicateReservedTables(List<TableEntity> tables, List<ReservationEntity> reservations) {
-		List<TableEntity> modifiedTables = tables;
-		for(TableEntity table : modifiedTables) {
-			for(ReservationEntity reservation : reservations) {
-				if(table == reservation.getTable()) {
-					modifiedTables.remove(table);
+	private List<TableEntity> RemoveDuplicateReservedTables(List<TableEntity> tables, List<ReservationEntity> reservations) {		
+		for (int i = 0; i < tables.size(); i++) {
+			for (int j = 0; j < reservations.size(); j++) {
+				if(tables.get(i).getId() == reservations.get(j).getTable().getId()) {
+					tables.remove(i);
 					break;
 				}
 			}
 		}
-		return modifiedTables;
+		return tables;
 	}
 	
 }
