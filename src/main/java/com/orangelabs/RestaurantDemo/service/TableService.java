@@ -5,9 +5,10 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import com.orangelabs.RestaurantDemo.dao.ReservationDaoInterface;
 import com.orangelabs.RestaurantDemo.dao.TableDaoInterface;
+import com.orangelabs.RestaurantDemo.entity.ReservationEntity;
 import com.orangelabs.RestaurantDemo.entity.TableEntity;
 
 @Service
@@ -20,10 +21,12 @@ public class TableService {
 //	}
 //	
 	private TableDaoInterface tablesRepository;
+	private ReservationDaoInterface reservationRepository;
 	
 	@Autowired
-	public TableService(TableDaoInterface tableDaoToEnject) {
-		this.tablesRepository = tableDaoToEnject; 
+	public TableService(TableDaoInterface tableDaoToInject, ReservationDaoInterface reservationDaoToInject) {
+		this.tablesRepository = tableDaoToInject;
+		this.reservationRepository = reservationDaoToInject;
 	}
 	
 	public List<TableEntity> getTables(){
@@ -35,7 +38,23 @@ public class TableService {
 	}
 	
 	public List<TableEntity>  getAvailavleTables(Date availableDate) {
-		return tablesRepository.getAvailableTables(availableDate);
+		List<TableEntity> availableTables = tablesRepository.getAvailableTables(availableDate); 
+		List<ReservationEntity> reservations = reservationRepository.getReservedTables(availableDate);
+		availableTables = RemoveDuplicateReservedTables(availableTables, reservations);
+		return availableTables;
+	}
+	
+	private List<TableEntity> RemoveDuplicateReservedTables(List<TableEntity> tables, List<ReservationEntity> reservations) {
+		List<TableEntity> modifiedTables = tables;
+		for(TableEntity table : modifiedTables) {
+			for(ReservationEntity reservation : reservations) {
+				if(table == reservation.getTable()) {
+					modifiedTables.remove(table);
+					break;
+				}
+			}
+		}
+		return modifiedTables;
 	}
 	
 }
