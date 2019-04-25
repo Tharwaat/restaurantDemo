@@ -13,13 +13,7 @@ import com.orangelabs.RestaurantDemo.entity.TableEntity;
 
 @Service
 public class TableService {
-//	private TableDao tableDao;
-//	
-//	@Autowired
-//	public TableService(TableDao tableDaoToEnject) {
-//		this.tableDao = tableDaoToEnject; 
-//	}
-//	
+	
 	private TableDaoInterface tablesRepository;
 	private ReservationDaoInterface reservationRepository;
 	
