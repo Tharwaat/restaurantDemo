@@ -1,5 +1,6 @@
 package com.orangelabs.RestaurantDemo.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,7 +11,7 @@ import com.orangelabs.RestaurantDemo.entity.UserEntity;
 import com.orangelabs.RestaurantDemo.service.AuthService;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping
 public class AuthController {
 	
 	private AuthService authService;
@@ -20,6 +21,11 @@ public class AuthController {
 		this.authService = authServiceToInject;
 		this.bcryptPasswordEncoder = passwordEncoderToInject;
 	}
+	
+//	@PostMapping("/login")
+//    public ResponseEntity createCustomer(@RequestBody AuthenticationRequest request) {
+//        return new ResponseEntity<>(authenticationService.generateJWTToken(request.getUsername(), request.getPassword()), HttpStatus.OK);
+//    }
 	
 	@PostMapping("/register")
 	public void registerUser(@RequestBody UserEntity newUser) {
