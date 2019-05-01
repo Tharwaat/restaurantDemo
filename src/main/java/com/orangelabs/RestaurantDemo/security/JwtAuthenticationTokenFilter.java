@@ -7,25 +7,68 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
+import com.orangelabs.RestaurantDemo.dao.UserDaoInterface;
+import com.orangelabs.RestaurantDemo.entity.UserEntity;
 
+public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
+	
+	private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
+	
     @Value("${jwt.header}")
     private String tokenHeader;
-
+    
+    @Autowired
+    private JwtService jwtService;
+    
+    @Autowired
+    private UserDaoInterface userService;
+    
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) 
     		throws ServletException, IOException {
-        final String requestHeader = request.getHeader(this.tokenHeader);
-
-        if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
-            String  authToken = requestHeader.substring(7);
-            JwtAuthentication authentication = new JwtAuthentication(authToken);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+    	
+    	try {
+    		String jwt = getJwt(request);
+    		System.out.println("Token " + jwt);
+    		if (jwt != null && jwtService.validateJwtToken(jwt)) {
+    			
+    	        String email = jwtService.getEmailFromToken(jwt);
+    	 
+    	        UserEntity authenticatedUser = userService.findByEmail(email);
+    	        JwtAuthenticatedProfile jwtAuthenticatedUser = JwtAuthenticatedProfile.build(authenticatedUser);
+    	        
+    	        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+    	        		jwtAuthenticatedUser, null, jwtAuthenticatedUser.getAuthorities());
+    	        
+    	        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+    	 
+    	        SecurityContextHolder.getContext().setAuthentication(authentication);
+    	    }
+    		
+            chain.doFilter(request, response);
+            
+    	}catch (Exception e) {
+    		logger.error("Can NOT set user authentication -> Message: {}", e);
         }
-        chain.doFilter(request, response);
+        
+    }
+    
+    private String getJwt(HttpServletRequest request) {
+        String authHeader = request.getHeader(this.tokenHeader);
+     
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+          return authHeader.replace("Bearer ", "");
+        }
+        return null;
     }
 }

@@ -2,21 +2,28 @@ package com.orangelabs.RestaurantDemo.security;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Optional;
 import java.util.function.Function;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 
 @Service
 public class JwtService {
 
     private String secret;
     private Long expiration;
+    private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
     public JwtService(@Value("${jwt.secret}") String secret,
                       @Value("${jwt.expiration}") Long expiration) {
@@ -68,11 +75,23 @@ public class JwtService {
         return expiration.after(new Date());
     }
 
-    public boolean validateToken(String token) {
-        if (isTokenNotExpired(token))
-			return true;
-		else
-			return false;
+    public boolean validateJwtToken(String authToken) {
+        try {
+            Jwts.parser().setSigningKey(secret).parseClaimsJws(authToken);
+            return true;
+        } catch (SignatureException e) {
+            logger.error("Invalid JWT signature -> Message: {} ", e);
+        } catch (MalformedJwtException e) {
+            logger.error("Invalid JWT token -> Message: {}", e);
+        } catch (ExpiredJwtException e) {
+            logger.error("Expired JWT token -> Message: {}", e);
+        } catch (UnsupportedJwtException e) {
+            logger.error("Unsupported JWT token -> Message: {}", e);
+        } catch (IllegalArgumentException e) {
+            logger.error("JWT claims string is empty -> Message: {}", e);
+        }
+        
+        return false;
     }
 	
 }

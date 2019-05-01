@@ -106,18 +106,18 @@ public class UserEntity {
 	
 	public enum UserType {
 	    USER("USER"), ADMIN("ADMIN");
-		private String role;
+		private String roleName;
 		
 		private UserType(String role){
-            this.role = role;
+            this.roleName = role;
         }
 
-        public void setRole(String role){
-            this.role = role;
+        public void setRoleName(String role){
+            this.roleName = role;
         }
 
-        public String getRole(){
-             return this.role;
+        public String getRoleName(){
+             return this.roleName;
         }
 	}
 	
