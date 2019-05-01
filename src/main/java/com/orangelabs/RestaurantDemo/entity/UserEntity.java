@@ -2,6 +2,7 @@ package com.orangelabs.RestaurantDemo.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -11,6 +12,8 @@ import javax.persistence.Table;
 @Table(name="user")
 public class UserEntity {
 	
+	private static final String EnumType = null;
+
 	// Columns
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -29,16 +32,17 @@ public class UserEntity {
 	@Column(name="mobile_number")
 	private String mobileNumber;
 	
-	@Column(name="is_admin")
-	private boolean isAdmin;
+	@Enumerated(javax.persistence.EnumType.STRING)
+	@Column(name="role")
+	private UserType role;
 
 	// Constructors
-	public UserEntity(String name, String email, String password, String mobileNumber, boolean isAdmin) {
+	public UserEntity(String name, String email, String password, String mobileNumber, UserType role) {
 		this.name = name;
 		this.email = email;
 		this.password = password;
 		this.mobileNumber = mobileNumber;
-		this.isAdmin = isAdmin;
+		this.role = role;
 	}
 	
 	public UserEntity() {
@@ -84,20 +88,38 @@ public class UserEntity {
 
 	public void setMobileNumber(String mobileNumber) {
 		this.mobileNumber = mobileNumber;
+	}	
+	
+	public UserType getRole() {
+		return this.role;
 	}
 
-	public boolean isAdmin() {
-		return isAdmin;
+	public void setRole(UserType role) {
+		this.role = role;
 	}
-
-	public void setAdmin(boolean isAdmin) {
-		this.isAdmin = isAdmin;
-	}
-
+	
 	@Override
 	public String toString() {
 		return "UserEntity [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password
-				+ ", mobileNumber=" + mobileNumber + ", isAdmin=" + isAdmin + "]";
-	}	
+				+ ", mobileNumber=" + mobileNumber + ", role=" + role + "]";
+	}
+	
+	public enum UserType {
+	    USER("USER"), ADMIN("ADMIN");
+		private String role;
+		
+		private UserType(String role){
+            this.role = role;
+        }
+
+        public void setRole(String role){
+            this.role = role;
+        }
+
+        public String getRole(){
+             return this.role;
+        }
+	}
 	
 }
+

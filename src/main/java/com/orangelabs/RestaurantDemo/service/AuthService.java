@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.orangelabs.RestaurantDemo.dao.UserDaoInterface;
 import com.orangelabs.RestaurantDemo.entity.UserEntity;
+import com.orangelabs.RestaurantDemo.entity.UserEntity.UserType;
 import com.orangelabs.RestaurantDemo.response.JWTTokenResponse;
 import com.orangelabs.RestaurantDemo.security.JwtService;
 
@@ -31,6 +32,7 @@ public class AuthService {
 	public void createUser(UserEntity newUser) {
 		String encryptedPassword = bcryptPasswordEncoder.encode(newUser.getPassword());
 		newUser.setPassword(encryptedPassword);
+		newUser.setRole(UserType.USER);
 		userDaoInterface.save(newUser);
 	}
 	
