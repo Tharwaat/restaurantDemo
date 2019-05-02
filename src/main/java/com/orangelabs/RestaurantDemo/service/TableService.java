@@ -2,6 +2,7 @@ package com.orangelabs.RestaurantDemo.service;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,45 +11,49 @@ import com.orangelabs.RestaurantDemo.dao.ReservationDaoInterface;
 import com.orangelabs.RestaurantDemo.dao.TableDaoInterface;
 import com.orangelabs.RestaurantDemo.entity.ReservationEntity;
 import com.orangelabs.RestaurantDemo.entity.TableEntity;
+import com.orangelabs.RestaurantDemo.request.NewTableRequest;
 
 @Service
 public class TableService {
-	
+
 	private TableDaoInterface tablesRepository;
 	private ReservationDaoInterface reservationRepository;
-	
+
 	@Autowired
 	public TableService(TableDaoInterface tableDaoToInject, ReservationDaoInterface reservationDaoToInject) {
 		this.tablesRepository = tableDaoToInject;
 		this.reservationRepository = reservationDaoToInject;
 	}
-	
-	public List<TableEntity> getTables(){
-		return tablesRepository.findAll();
-	}
-	
-	public void createTable(TableEntity newTable) {
-		tablesRepository.save(newTable);
-	}
-	
-	public List<TableEntity>  getAvailavleTables(Date availableDate) {
-		List<TableEntity> availableTables = tablesRepository.getAvailableTables(availableDate); 
-		List<ReservationEntity> reservations = reservationRepository.getReservedTables(availableDate);
-		System.out.println(reservations);
-		RemoveDuplicateReservedTables(availableTables, reservations);
-		return availableTables;
-	}
-	
-	private List<TableEntity> RemoveDuplicateReservedTables(List<TableEntity> tables, List<ReservationEntity> reservations) {		
-		for (int i = 0; i < tables.size(); i++) {
-			for (int j = 0; j < reservations.size(); j++) {
-				if(tables.get(i).getId() == reservations.get(j).getTable().getId()) {
-					tables.remove(i);
-					break;
-				}
-			}
+
+	public List<TableEntity> getTables() {
+		try {
+			return tablesRepository.findAll();
+			
+		} catch (Exception error) {
+			throw error;
 		}
-		return tables;
 	}
-	
+
+	public void createTable(NewTableRequest newTable) {
+		try {
+			TableEntity tableToSave = new TableEntity(newTable.getTableCapacity(), newTable.getTableNumber());
+
+			tablesRepository.save(tableToSave);
+			
+		} catch (Exception error) {
+			throw error;
+		}
+	}
+
+	public Set<TableEntity> getAvailavleTables(String date) {
+		try {
+			Date availableDate = java.sql.Date.valueOf(date);
+			Set<TableEntity> availableTables = tablesRepository.getAvailableTables(availableDate);
+			return availableTables;
+			
+		} catch (Exception error) {
+			throw error;
+		}
+	}
+
 }

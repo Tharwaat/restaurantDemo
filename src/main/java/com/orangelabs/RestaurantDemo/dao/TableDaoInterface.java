@@ -1,12 +1,11 @@
 package com.orangelabs.RestaurantDemo.dao;
 
 import java.sql.Date;
-import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.orangelabs.RestaurantDemo.entity.ReservationEntity;
 import com.orangelabs.RestaurantDemo.entity.TableEntity;
 
 public interface TableDaoInterface extends JpaRepository<TableEntity, Integer> {
@@ -16,5 +15,5 @@ public interface TableDaoInterface extends JpaRepository<TableEntity, Integer> {
 				 + "SELECT * FROM restaurant_table AS a "
 				 + "INNER JOIN reservation AS b ON a.id = b.table_id WHERE  b.date !=  ?1", 
 				nativeQuery = true)
-	public List<TableEntity> getAvailableTables(Date availableDate);
+	public Set<TableEntity> getAvailableTables(Date availableDate);
 }
