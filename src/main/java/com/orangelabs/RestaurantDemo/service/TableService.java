@@ -13,13 +13,7 @@ import com.orangelabs.RestaurantDemo.entity.TableEntity;
 
 @Service
 public class TableService {
-//	private TableDao tableDao;
-//	
-//	@Autowired
-//	public TableService(TableDao tableDaoToEnject) {
-//		this.tableDao = tableDaoToEnject; 
-//	}
-//	
+	
 	private TableDaoInterface tablesRepository;
 	private ReservationDaoInterface reservationRepository;
 	
@@ -40,7 +34,7 @@ public class TableService {
 	public List<TableEntity>  getAvailavleTables(Date availableDate) {
 		List<TableEntity> availableTables = tablesRepository.getAvailableTables(availableDate); 
 		List<ReservationEntity> reservations = reservationRepository.getReservedTables(availableDate);
-		//availableTables = 
+		System.out.println(reservations);
 		RemoveDuplicateReservedTables(availableTables, reservations);
 		return availableTables;
 	}
