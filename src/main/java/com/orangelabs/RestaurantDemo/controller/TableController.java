@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.orangelabs.RestaurantDemo.entity.TableEntity;
 import com.orangelabs.RestaurantDemo.request.NewTableRequest;
+import com.orangelabs.RestaurantDemo.response.ResponseMessage;
 import com.orangelabs.RestaurantDemo.service.TableService;
 
 @RestController
@@ -34,14 +35,20 @@ public class TableController {
 	}
 	
 	@PostMapping("/tables")
-	public ResponseEntity<String> addTable(@RequestBody NewTableRequest newTable) {
+	public ResponseEntity addTable(@RequestBody NewTableRequest newTable) {
+		ResponseMessage response = new ResponseMessage();
+		
 		if(newTable.getTableCapacity() == 0 || newTable.getTableCapacity() == 0) {
+			response.setMessage("Invalid request, Table number or Table capacity is missing");
 			return 
-				new ResponseEntity<>("Invalid request, Table number or Table capacity is missing",
+				new ResponseEntity<>(response,
 				HttpStatus.BAD_REQUEST);
 		}
-		tableService.createTable(newTable);		
-		return new ResponseEntity<>("Table Created Successfully!", HttpStatus.CREATED);
+		
+		tableService.createTable(newTable);
+		response.setMessage("Table Created Successfully!");
+		
+		return new ResponseEntity<>(response, HttpStatus.CREATED);
 	}
 	
 	@GetMapping("/tables/available")

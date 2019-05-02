@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.orangelabs.RestaurantDemo.entity.ReservationEntity;
 import com.orangelabs.RestaurantDemo.request.NewReservationRequest;
+import com.orangelabs.RestaurantDemo.response.ResponseMessage;
 import com.orangelabs.RestaurantDemo.service.ReservationService;
 
 @RestController
@@ -39,10 +40,17 @@ public class ReservationController {
 	}
 	
 	@PostMapping("/reservations")
-	public ResponseEntity<String> makeReservation(@RequestBody NewReservationRequest newReservation){
+	public ResponseEntity makeReservation(@RequestBody NewReservationRequest newReservation){
+		ResponseMessage response = new ResponseMessage();
+		
+		if(newReservation.getPersonsNumber() == 0 || newReservation.getReservationDate() == null) {
+			response.setMessage("Invalid request, Persons number or Reservation date is missing");
+			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+		}
+		
 		reservationService.createReservation(newReservation);
-		return new ResponseEntity<String>("Reservation's been saved Successfully!", HttpStatus.OK);
-	}
-	
-	
+		response.setMessage("Reservation's been saved Successfully!");
+		
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}	
 }
