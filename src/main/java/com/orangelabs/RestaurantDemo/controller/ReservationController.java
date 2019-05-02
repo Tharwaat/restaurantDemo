@@ -1,6 +1,5 @@
 package com.orangelabs.RestaurantDemo.controller;
 
-import java.sql.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +26,12 @@ public class ReservationController {
 		this.reservationService = reservationServiceToEnject; 
 	}
 	
+	@GetMapping("/reservations/filter")
+	public ResponseEntity<List<ReservationEntity>> getReservationsByDate(@RequestParam("date")  String date){
+		List<ReservationEntity> reservations = reservationService.getReservationsByDate(date);
+		return new ResponseEntity<List<ReservationEntity>>(reservations, HttpStatus.OK);		
+	}
+	
 	@GetMapping("/reservations")	
 	public ResponseEntity<List<ReservationEntity>> getAllReservations(){
 		List<ReservationEntity> reservations = reservationService.getReservations();
@@ -39,10 +44,5 @@ public class ReservationController {
 		return new ResponseEntity<String>("Reservation's been saved Successfully!", HttpStatus.OK);
 	}
 	
-	@GetMapping("/reservatoions/filter")
-	public ResponseEntity<List<ReservationEntity>> getReservationsByDate(@RequestParam("date")  String date){
-		Date dateToSearchWith = java.sql.Date.valueOf(date);
-		List<ReservationEntity> reservations = reservationService.getReservationsByDate(dateToSearchWith);
-		return new ResponseEntity<List<ReservationEntity>>(reservations, HttpStatus.OK);		
-	}
+	
 }
