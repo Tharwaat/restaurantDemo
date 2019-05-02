@@ -33,10 +33,15 @@ public class TableController {
 		return new ResponseEntity<List<TableEntity>>(tables, HttpStatus.OK);
 	}
 	
-	@PostMapping("/tables/new")
+	@PostMapping("/tables")
 	public ResponseEntity<String> addTable(@RequestBody NewTableRequest newTable) {
+		if(newTable.getTableCapacity() == 0 || newTable.getTableCapacity() == 0) {
+			return 
+				new ResponseEntity<>("Invalid request, Table number or Table capacity is missing",
+				HttpStatus.BAD_REQUEST);
+		}
 		tableService.createTable(newTable);		
-		return new ResponseEntity<String>("Table Created Successfully!", HttpStatus.OK);
+		return new ResponseEntity<>("Table Created Successfully!", HttpStatus.CREATED);
 	}
 	
 	@GetMapping("/tables/available")
