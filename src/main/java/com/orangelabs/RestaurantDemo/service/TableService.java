@@ -34,7 +34,7 @@ public class TableService {
 	public List<TableEntity>  getAvailavleTables(Date availableDate) {
 		List<TableEntity> availableTables = tablesRepository.getAvailableTables(availableDate); 
 		List<ReservationEntity> reservations = reservationRepository.getReservedTables(availableDate);
-		//availableTables = 
+		System.out.println(reservations);
 		RemoveDuplicateReservedTables(availableTables, reservations);
 		return availableTables;
 	}
