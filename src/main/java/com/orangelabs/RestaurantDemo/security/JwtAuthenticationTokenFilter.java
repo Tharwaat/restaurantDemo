@@ -39,7 +39,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     	
     	try {
     		String jwt = getJwt(request);
-    		System.out.println("Token " + jwt);
+    		
     		if (jwt != null && jwtService.validateJwtToken(jwt)) {
     			
     	        String email = jwtService.getEmailFromToken(jwt);
@@ -57,8 +57,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     		
             chain.doFilter(request, response);
             
-    	}catch (Exception e) {
-    		logger.error("Can NOT set user authentication -> Message: {}", e);
+    	}catch (Exception error) {
+    		logger.error("Can not set user authentication -> Message: {}", error);
         }
         
     }

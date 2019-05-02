@@ -35,24 +35,53 @@ public class AuthController {
 	}
 	
 	@PostMapping("/login")
-    public ResponseEntity<JwtTokenResponse> login(@RequestBody AuthenticationRequest request) {
-		UserEntity resultedUser = authService.checkUserExistence(request.getEmail(), request.getPassword());
-		JwtAuthenticatedProfile authenticatedUser = JwtAuthenticatedProfile.build(resultedUser);
-		
-		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(resultedUser.getEmail(), resultedUser.getPassword(), authenticatedUser.getAuthorities());
-		System.out.println(authentication);
-		
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		
-		String accessToken = authService.generateJWTToken(resultedUser.getEmail());		
-		
-		JwtTokenResponse tokenResponse = new JwtTokenResponse(accessToken, authentication.getPrincipal().toString(), authentication.getAuthorities());
-		
-        return new ResponseEntity<JwtTokenResponse>(tokenResponse, HttpStatus.OK);
+    public ResponseEntity login(@RequestBody AuthenticationRequest request) {
+		try {
+			
+			UserEntity foundUser = authService.authenticateUser(request);
+			
+			UsernamePasswordAuthenticationToken authentication = 
+					this.resgisteringAuthenticatedUserInContext(foundUser);
+			
+			JwtTokenResponse tokenResponse = 
+					this.generateTokenWithResponse(foundUser, authentication);			
+			
+			return new ResponseEntity<JwtTokenResponse>(tokenResponse, HttpStatus.OK);
+			
+		}catch(Exception error) {
+			return new ResponseEntity<>(error.getMessage(), HttpStatus.CONFLICT);
+		}
     }
 	
 	@PostMapping("/register")
 	public void registerUser(@RequestBody UserEntity newUser) {
 		authService.createUser(newUser);
+	}
+	
+	//////
+	
+	private UsernamePasswordAuthenticationToken resgisteringAuthenticatedUserInContext(UserEntity user) {
+		//Building authentication profile
+		JwtAuthenticatedProfile authenticatedUser = JwtAuthenticatedProfile.build(user);
+		
+		UsernamePasswordAuthenticationToken authentication = 
+				new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword(), authenticatedUser.getAuthorities());
+		
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		
+		return authentication;
+	}
+	
+	private JwtTokenResponse generateTokenWithResponse(UserEntity authenticatedUser,
+			UsernamePasswordAuthenticationToken authentication) {
+		
+		String accessToken = authService.generateJWTToken(authenticatedUser.getEmail());		
+		
+		JwtTokenResponse tokenResponse = 
+				new JwtTokenResponse(accessToken, 
+						authentication.getPrincipal().toString(), 
+						authentication.getAuthorities());
+		
+		return tokenResponse;
 	}
 }

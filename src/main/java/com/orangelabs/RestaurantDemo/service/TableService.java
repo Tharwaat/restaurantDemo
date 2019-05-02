@@ -28,6 +28,7 @@ public class TableService {
 
 	public List<TableEntity> getTables() {
 		try {
+			
 			return tablesRepository.findAll();
 			
 		} catch (Exception error) {
@@ -37,8 +38,8 @@ public class TableService {
 
 	public void createTable(NewTableRequest newTable) {
 		try {
+			
 			TableEntity tableToSave = new TableEntity(newTable.getTableCapacity(), newTable.getTableNumber());
-
 			tablesRepository.save(tableToSave);
 			
 		} catch (Exception error) {
@@ -48,8 +49,10 @@ public class TableService {
 
 	public Set<TableEntity> getAvailavleTables(String date) {
 		try {
+			
 			Date availableDate = java.sql.Date.valueOf(date);
 			Set<TableEntity> availableTables = tablesRepository.getAvailableTables(availableDate);
+			
 			return availableTables;
 			
 		} catch (Exception error) {

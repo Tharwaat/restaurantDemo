@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.orangelabs.RestaurantDemo.dao.UserDaoInterface;
 import com.orangelabs.RestaurantDemo.entity.UserEntity;
 import com.orangelabs.RestaurantDemo.entity.UserEntity.UserType;
+import com.orangelabs.RestaurantDemo.request.AuthenticationRequest;
 import com.orangelabs.RestaurantDemo.response.JwtTokenResponse;
 import com.orangelabs.RestaurantDemo.security.JwtService;
 
@@ -45,15 +46,23 @@ public class AuthService {
         return token;
     }
 	
-	public UserEntity checkUserExistence(String email, String password) {
-		UserEntity foundUser = userDaoInterface.findByEmail(email);
-		
-        if(foundUser == null) 
-        	new EntityNotFoundException("Account not found");
-        
-        if(!bcryptPasswordEncoder.matches(password, foundUser.getPassword()))
-        	System.out.println("Wrong password");
-        
-        return foundUser;
+	public UserEntity authenticateUser(AuthenticationRequest request) {
+		try{
+			String email = request.getEmail();
+			String password = request.getPassword();
+			
+			UserEntity foundUser = userDaoInterface.findByEmail(email);
+			
+			if(foundUser == null)
+				throw new EntityNotFoundException("Account not Found");
+			
+			if(!bcryptPasswordEncoder.matches(password, foundUser.getPassword()))
+				throw new EntityNotFoundException("Wrong Password!");        	
+			
+			return foundUser;
+			
+		}catch(Exception error) {
+			throw error;
+		}		
 	}
 }

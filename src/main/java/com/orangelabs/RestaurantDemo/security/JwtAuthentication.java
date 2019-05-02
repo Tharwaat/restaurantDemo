@@ -7,7 +7,9 @@ import java.util.Collection;
 
 
 public class JwtAuthentication implements Authentication {
-    private final String token;
+    
+	private static final long serialVersionUID = 1L;
+	private final String token;
 
     public JwtAuthentication(String token) {
         this.token = token;
